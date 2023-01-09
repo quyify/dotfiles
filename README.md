@@ -2,7 +2,7 @@
 
 Quy's dotfiles, aimed to be portable across platforms and environments
 
-## Quickstark
+## Quickstart
 
 Run this idempotent install script
 ```
