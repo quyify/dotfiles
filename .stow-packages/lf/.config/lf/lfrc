@@ -105,3 +105,24 @@ cmd zip ${{
     rm -rf $1
 }}
 
+# Added by Quy -- to copy the absolute path
+cmd copy-filepath ${{
+    printf "%s" $fx | pbcopy
+}}
+
+map P copy-filepath
+
+# Added by Quy -- to copy the filename
+cmd copy-filename ${{
+    printf "%s" $(basename $fx) | pbcopy
+}}
+
+map Y copy-filename
+
+# define a custom 'delete' command
+cmd csv-copy-column ${{
+  selected_header=$(head -n 1 $fx | tr ',' '\n' | fzf --prompt="Which column do you want to grab? ")
+  xsv select $selected_header $fx | grep -v $selected_header | paste -sd ',' - | pbcopy
+}}
+
+map C csv-copy-column
