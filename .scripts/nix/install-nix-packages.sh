@@ -12,7 +12,7 @@ if [[ -z "$SPIN" ]]; then
 	nix-env -iA nixpkgs.tmux
 	nix-env -iA nixpkgs.neovim
 	nix-env -iA nixpkgs.unzip
-	nix-env -iA nixpkgs.ruby_3_1
+	nix-env -iA nixpkgs.ruby_3_3
 	nix-env -iA nixpkgs.nodejs
 	nix-env -iA nixpkgs.nodePackages.npm
 fi
@@ -32,3 +32,4 @@ nix-env -iA nixpkgs.ripgrep
 nix-env -iA nixpkgs.nvimpager
 nix-env -iA nixpkgs.cht-sh
 nix-env -iA nixpkgs.direnv
+nix-env -iA nixpkgs.thefuck
