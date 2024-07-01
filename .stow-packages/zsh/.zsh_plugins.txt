@@ -11,9 +11,6 @@
 #jeffreytse/zsh-vi-mode
 #romkatv/powerlevel10k
 
-
-robbyrussell/oh-my-zsh path:plugins/colored-man-pages
-
 # jeffreytse/zsh-vi-mode: Adds vi keybindings to Zsh.
 # Example usage: Use vi-style navigation and editing commands in your Zsh command line.
 jeffreytse/zsh-vi-mode
@@ -30,17 +27,12 @@ manlao/zsh-auto-nvm
 # Example usage: Receive a desktop notification when a command like `sleep 10` finishes.
 MichaelAquilina/zsh-auto-notify
 
-# olivierverdier/zsh-git-prompt: Provides a customizable prompt that shows information about the current Git repository.
-# Example usage: See the current branch name and the status of the working directory in your prompt.
-olivierverdier/zsh-git-prompt
+#romkatv/powerlevel10k: A fancy prompt
+romkatv/powerlevel10k
 
 # rupa/z: Allows you to quickly navigate to directories you have visited frequently.
 # Example usage: Use `z <directory>` to jump to a directory you have visited before.
 rupa/z
-
-# sindresorhus/pure: A minimalistic and fast Zsh prompt that shows information about the current Git repository and the status of the working directory.
-# Example usage: See a clean and informative prompt with Git status indicators.
-sindresorhus/pure
 
 # zsh-users/zsh-autosuggestions: Suggests commands as you type based on your command history.
 # Example usage: Start typing a command and see suggestions appear in light gray.
