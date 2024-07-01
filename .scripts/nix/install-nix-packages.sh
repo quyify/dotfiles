@@ -21,6 +21,7 @@ nix-env -iA nixpkgs.lazygit
 nix-env -iA nixpkgs.envsubst
 nix-env -iA nixpkgs.stow
 nix-env -iA nixpkgs.antibody
+nix-env -iA nixpkgs.antidote
 nix-env -iA nixpkgs.tmuxinator
 nix-env -iA nixpkgs.bat
 nix-env -iA nixpkgs.sourceHighlight

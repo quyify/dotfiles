@@ -64,8 +64,15 @@ return {
     },
   },
   {
+    "garymjr/nvim-snippets",
+    opts = {
+      friendly_snippets = true,
+    },
+    dependencies = { "rafamadriz/friendly-snippets" },
+  },
+  {
     "rafamadriz/friendly-snippets",
-    opts = {},
+    opts = nil,
   },
   {
     "hrsh7th/cmp-path",

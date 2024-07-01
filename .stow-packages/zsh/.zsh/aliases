@@ -25,6 +25,9 @@ alias gpr="git pull --rebase"
 alias log="git log --oneline --decorate --graph"
 alias dbp="dev cd business-platform"
 alias dshop="dev cd shopify"
+alias dbo="dev cd bouregois"
+alias dweb="dev cd web"
+alias dab="dev cd abacus"
 
 if [[ `uname` != "Darwin" ]]; then
 	if [[ `which xsel 2> /dev/null` ]]; then
