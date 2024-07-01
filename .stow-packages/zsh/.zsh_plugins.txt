@@ -21,7 +21,7 @@ joshskidmore/zsh-fzf-history-search
 
 # manlao/zsh-auto-nvm: Simplifies the management of Node.js versions using nvm (Node Version Manager).
 # Example usage: Use `nvm install <version>` to install a specific Node.js version.
-manlao/zsh-auto-nvm
+#manlao/zsh-auto-nvm
 
 # MichaelAquilina/zsh-auto-notify: Notifies you when a long-running command finishes.
 # Example usage: Receive a desktop notification when a command like `sleep 10` finishes.
