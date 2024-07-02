@@ -42,8 +42,6 @@ if [[ -n "${REPLACE_spin}" ]]; then
 #  ~/.cache/antibody/https-COLON--SLASH--SLASH-github.com-SLASH-romkatv-SLASH-powerlevel10k/gitstatus/install -f
 fi
 
-
-
 echo "********************************************************************************"
 if [[ "$(uname)" == "Darwin" ]]; then
  echo "Loading Darwin"
@@ -52,6 +50,9 @@ else
 fi
 echo "********************************************************************************"
 
+# Command correcting typos from the previously inputted command on the commandline.
+eval $(thefuck --alias)
+
 # Load Nix
 if [ -e ${REPLACE_home}/.nix-profile/etc/profile.d/nix.sh ]; then . ${REPLACE_home}/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
@@ -59,6 +60,7 @@ if [ -e ${REPLACE_home}/.nix-profile/etc/profile.d/nix.sh ]; then . ${REPLACE_ho
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # For Spin
+# Ensure compinit is loaded
+autoload -Uz compinit
+compinit
 [[ -f /opt/dev/dev.sh ]] && source /opt/dev/dev.sh
-
-eval $(thefuck --alias)
