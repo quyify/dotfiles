@@ -1,3 +1,28 @@
-#!/bin/sh
+#!/bin/bash
 
-ssh -X $(spin list -o fqdn | fzf)
+# Define the options for the second prompt, one per line
+options=(
+  "ssh"
+  "open"
+  "up"
+  "destroy"
+)
+
+# Prompt the user with another fzf question
+action=$(printf "%s\n" "${options[@]}" | fzf --reverse --prompt="Which spin command? ")
+
+# Perform the action based on the user's choice
+if [ "$action" == "ssh" ]; then
+  # Get the host using fzf, skipping the first line of output
+  host=$(spin list -o fqdn | tail -n +2 | fzf --reverse --prompt="Which host do you want to ssh into? ")
+
+  ssh -X $host
+elif [ "$action" == "open" ]; then
+  host=$(spin list -o name | fzf --reverse --prompt="Which Spin instance do you want to open? ")
+
+  spin open $host
+elif [ "$action" == "up" ]; then
+  spinup
+elif [ "$action" == "destroy" ]; then
+  spin destroy
+fi

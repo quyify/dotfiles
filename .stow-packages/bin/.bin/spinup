@@ -1,0 +1,168 @@
+#!/bin/bash
+
+# Function to prompt user with fzf
+prompt_fzf() {
+  local prompt_message=$1
+  local options=$2
+  echo "$options" | fzf --reverse --prompt="$prompt_message: "
+}
+
+# Function to prompt user with fzf for multi-selection
+prompt_fzf_multi() {
+  local prompt_message=$1
+  local options=$2
+  echo "$options" | fzf --reverse --prompt="$prompt_message: " --multi
+}
+
+# Function to prompt user with readline, with a default value
+prompt_readline() {
+  local prompt_message=$1
+  local default_value=$2
+  read -p "$prompt_message [$default_value]: " input
+  echo "${input:-$default_value}"
+}
+
+# Get the list of directories in ~/src/github.com/Shopify ordered by recency
+get_recent_directories() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    find ~/src/github.com/Shopify -maxdepth 1 -type d -exec stat -f '%m %N' {} + | sort -nr | cut -d' ' -f2- | xargs -I{} basename {}
+  else
+    # Linux
+    find ~/src/github.com/Shopify -maxdepth 1 -type d -exec stat --format '%Y %n' {} + | sort -nr | cut -d' ' -f2- | xargs -I{} basename {}
+  fi
+}
+
+# Get the list of constellation files in the specified project directory
+get_constellations() {
+  local project=$1
+  find ~/src/github.com/Shopify/$project/.spin/constellations -type f -name '*.yml' -exec basename {} .yml \;
+}
+
+# Get the list of recently accessed branches for the specified project
+get_recent_branches() {
+  local project=$1
+  git -C ~/src/github.com/Shopify/$project for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads/
+}
+
+# Get the list of repos from the constellation yml files
+get_repos_from_constellation() {
+  local project=$1
+  local constellation=$2
+  local repos=()
+
+  # Function to parse repos from a given file
+  parse_repos() {
+    local file=$1
+    awk -v project="$project" '
+      /repos:/,0 {
+        if ($1 == "-") {
+          gsub(":", "", $2)
+          if ($2 != project) {
+            print $2
+          }
+        }
+      }
+    ' "$file"
+  }
+
+  # Check for the specific constellation file
+  if [[ -f ~/src/github.com/Shopify/$project/.spin/constellations/$constellation.yml ]]; then
+    repos+=($(parse_repos ~/src/github.com/Shopify/$project/.spin/constellations/$constellation.yml))
+  fi
+
+  # Check for the general constellation file
+  if [[ -f ~/src/github.com/Shopify/$project/.spin/constellation.yml ]]; then
+    repos+=($(parse_repos ~/src/github.com/Shopify/$project/.spin/constellation.yml))
+  fi
+
+  # Remove duplicates, sort alphabetically, and trim prefixes
+  echo "${repos[@]}" | tr ' ' '\n' | sort -u | sed 's|.*/||'
+}
+
+# Parse command-line arguments
+project=""
+constellation=""
+project_branch=""
+
+if [[ $1 =~ ^([^:]+)(:([^@]+))?(@(.+))?$ ]]; then
+  project="${BASH_REMATCH[1]}"
+  constellation="${BASH_REMATCH[3]}"
+  project_branch="${BASH_REMATCH[5]}"
+fi
+
+# Prompt for the project parameter if not specified
+if [[ -z $project ]]; then
+  recent_directories=$(get_recent_directories)
+  project=$(prompt_fzf "Which project?" "$recent_directories")
+fi
+
+# Prompt for the constellation parameter if not specified
+if [[ -z $constellation ]]; then
+  constellations=$(get_constellations "$project")
+  constellation=$(prompt_fzf "Select the constellation" "$constellations")
+fi
+
+# Prompt for the project-branch parameter if not specified
+if [[ -z $project_branch ]]; then
+  recent_branches=$(get_recent_branches "$project")
+  project_branch=$(prompt_fzf "Select the project branch" "$recent_branches")
+fi
+
+# Generate the suggested hostname based on the project-branch
+suggested_hostname=$(echo "$project_branch" | tr '/' '-')
+
+# Prompt for the --name parameter with the suggested hostname
+name_param=$(prompt_readline "Enter the --name parameter" "$suggested_hostname")
+
+# Prompt the user to choose whether to extend the name with a prefix, suffix, or nothing
+extend_choice=$(prompt_fzf "Extend the name with" "$(
+  cat <<EOF
+prefix
+suffix
+nothing
+EOF
+)")
+
+# Handle the user's choice
+case $extend_choice in
+prefix)
+  prefix=$(prompt_readline "Enter the prefix" "")
+  name_param="${prefix}-${name_param}"
+  ;;
+suffix)
+  suffix=$(prompt_readline "Enter the suffix" "")
+  name_param="${name_param}-${suffix}"
+  ;;
+nothing)
+  # Do nothing
+  ;;
+esac
+
+# Get the list of repos from the constellation yml files
+repos=$(get_repos_from_constellation "$project" "$constellation")
+
+# Ensure each repo is on a new line
+repos=$(echo "$repos" | tr ' ' '\n')
+
+# Prompt the user to select which constellation projects they want to set a branch for
+selected_repos=$(prompt_fzf_multi "Select which constellation projects you want to set a branch for (use Tab to select multiple)" "$(echo -e "none\n$repos")")
+
+# Initialize an array to hold the --config parameters
+config_params=()
+
+# If the user selected any repos, prompt for the branch names
+if [[ "$selected_repos" != "none" ]]; then
+  IFS=$'\n' read -rd '' -a selected_repos_array <<<"$selected_repos"
+  for repo in "${selected_repos_array[@]}"; do
+    branch=$(prompt_readline "Enter the branch for $repo" "$project_branch")
+    config_params+=("--config ${repo}.branch=${branch}")
+  done
+fi
+
+# Construct the final command
+final_command="spin up $project:$constellation@$project_branch --name '$name_param' ${config_params[@]}"
+
+# Execute the final command
+echo "Executing: $final_command"
+eval "$final_command"
