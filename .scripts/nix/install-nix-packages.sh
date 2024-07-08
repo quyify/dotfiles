@@ -24,6 +24,7 @@ nix-env -iA nixpkgs.direnv
 nix-env -iA nixpkgs.elixir-ls
 nix-env -iA nixpkgs.envsubst
 nix-env -iA nixpkgs.fzf
+nix-env -iA nixpkgs.gum
 nix-env -iA nixpkgs.lazygit
 nix-env -iA nixpkgs.lf
 nix-env -iA nixpkgs.libnotify
