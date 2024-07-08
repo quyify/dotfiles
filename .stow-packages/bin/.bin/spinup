@@ -4,14 +4,14 @@
 prompt_fzf() {
   local prompt_message=$1
   local options=$2
-  echo "$options" | fzf --reverse --prompt="$prompt_message: "
+  echo "$options" | fzf --prompt="$prompt_message: " --reverse
 }
 
 # Function to prompt user with fzf for multi-selection
 prompt_fzf_multi() {
   local prompt_message=$1
   local options=$2
-  echo "$options" | fzf --reverse --prompt="$prompt_message: " --multi
+  echo "$options" | fzf --prompt="$prompt_message: " --multi --reverse
 }
 
 # Function to prompt user with readline, with a default value
@@ -36,7 +36,7 @@ get_recent_directories() {
 # Get the list of constellation files in the specified project directory
 get_constellations() {
   local project=$1
-  find ~/src/github.com/Shopify/$project/.spin/constellations -type f -name '*.yml' -exec basename {} .yml \;
+  find ~/src/github.com/Shopify/$project/.spin/constellations -type f -name '*.yml' -exec basename {} .yml \; | sort
 }
 
 # Get the list of recently accessed branches for the specified project
@@ -100,13 +100,26 @@ fi
 # Prompt for the constellation parameter if not specified
 if [[ -z $constellation ]]; then
   constellations=$(get_constellations "$project")
-  constellation=$(prompt_fzf "Select the constellation" "$constellations")
+  constellations_with_default=$(echo -e "none\ndefault\n$constellations")
+  constellation=$(prompt_fzf "Select the constellation" "$constellations_with_default")
+fi
+
+# Handle the case where the constellation is 'default'
+if [[ "$constellation" == "default" ]]; then
+  default_symlink=~/.spin/$project/default
+  if [[ -L "$default_symlink" ]]; then
+    constellation=$(basename "$(readlink "$default_symlink")" .yml)
+  else
+    echo "Error: The symlink ~/.spin/$project/default does not exist or is not a valid symlink."
+    exit 1
+  fi
 fi
 
 # Prompt for the project-branch parameter if not specified
 if [[ -z $project_branch ]]; then
   recent_branches=$(get_recent_branches "$project")
-  project_branch=$(prompt_fzf "Select the project branch" "$recent_branches")
+  branches_with_none=$(echo -e "none\n$recent_branches")
+  project_branch=$(prompt_fzf "Select the project branch" "$branches_with_none")
 fi
 
 # Generate the suggested hostname based on the project-branch
@@ -161,7 +174,19 @@ if [[ "$selected_repos" != "none" ]]; then
 fi
 
 # Construct the final command
-final_command="spin up $project:$constellation@$project_branch --name '$name_param' ${config_params[@]}"
+if [[ "$constellation" == "none" ]]; then
+  if [[ "$project_branch" == "none" ]]; then
+    final_command="spin up $project --name '$name_param' ${config_params[@]}"
+  else
+    final_command="spin up $project@$project_branch --name '$name_param' ${config_params[@]}"
+  fi
+else
+  if [[ "$project_branch" == "none" ]]; then
+    final_command="spin up $project:$constellation --name '$name_param' ${config_params[@]}"
+  else
+    final_command="spin up $project:$constellation@$project_branch --name '$name_param' ${config_params[@]}"
+  fi
+fi
 
 # Execute the final command
 echo "Executing: $final_command"
