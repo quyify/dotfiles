@@ -1,4 +1,4 @@
-#!/bin/sh
+#!bin/sh
 
 function spinw() {
   spin up "$1" \
@@ -68,4 +68,15 @@ function spinbp_au() {
     --config business-platform.branch="${2:-main}" \
     --config shopify.env.SPIN_BUSINESS_PLATFORM_TOPHAT_SP_AU=1
     --config shopify.env.SPIN_BUSINESS_PLATFORM_TOPHAT_CAPITAL_AU=1
+ }
+
+function sesh-sessions() {
+  {
+    exec </dev/tty
+    exec <&1
+    local session
+    session=$(sesh list -t -c | fzf --height 40% --reverse --border-label ' sesh ' --border --prompt '⚡  ')
+    [[ -z "$session" ]] && return
+    sesh connect $session
   }
+}
