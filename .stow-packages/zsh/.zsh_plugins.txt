@@ -26,7 +26,7 @@ romkatv/powerlevel10k
 
 # rupa/z: Allows you to quickly navigate to directories you have visited frequently.
 # Example usage: Use `z <directory>` to jump to a directory you have visited before.
-rupa/z
+#rupa/z
 
 # zsh-users/zsh-autosuggestions: Suggests commands as you type based on your command history.
 # Example usage: Start typing a command and see suggestions appear in light gray.
