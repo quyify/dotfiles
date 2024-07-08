@@ -18,7 +18,7 @@ if [ "$action" == "ssh" ]; then
 
   ssh -X $host
 elif [ "$action" == "open" ]; then
-  host=$(spin list -o name | fzf --reverse --prompt="Which Spin instance do you want to open? ")
+  host=$(spin list -o name | tail -n +2 | fzf --reverse --prompt="Which Spin instance do you want to open? ")
 
   spin open $host
 elif [ "$action" == "up" ]; then
