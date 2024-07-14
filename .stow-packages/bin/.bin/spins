@@ -5,6 +5,7 @@ options=(
   "ssh"
   "open"
   "up"
+  "code"
   "destroy"
 )
 
@@ -23,6 +24,8 @@ elif [ "$action" == "open" ]; then
   spin open $host
 elif [ "$action" == "up" ]; then
   spinup
+elif [ "$action" == "code" ]; then
+  spin code
 elif [ "$action" == "destroy" ]; then
   spin destroy
 fi

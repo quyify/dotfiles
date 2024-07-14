@@ -128,30 +128,6 @@ suggested_hostname=$(echo "$project_branch" | tr '/' '-')
 # Prompt for the --name parameter with the suggested hostname
 name_param=$(prompt_readline "Enter the --name parameter" "$suggested_hostname")
 
-# Prompt the user to choose whether to extend the name with a prefix, suffix, or nothing
-extend_choice=$(prompt_fzf "Extend the name with" "$(
-  cat <<EOF
-prefix
-suffix
-nothing
-EOF
-)")
-
-# Handle the user's choice
-case $extend_choice in
-prefix)
-  prefix=$(prompt_readline "Enter the prefix" "")
-  name_param="${prefix}-${name_param}"
-  ;;
-suffix)
-  suffix=$(prompt_readline "Enter the suffix" "")
-  name_param="${name_param}-${suffix}"
-  ;;
-nothing)
-  # Do nothing
-  ;;
-esac
-
 # Get the list of repos from the constellation yml files
 repos=$(get_repos_from_constellation "$project" "$constellation")
 
@@ -173,21 +149,89 @@ if [[ "$selected_repos" != "none" ]]; then
   done
 fi
 
-# Construct the final command
-if [[ "$constellation" == "none" ]]; then
-  if [[ "$project_branch" == "none" ]]; then
-    final_command="spin up $project --name '$name_param' ${config_params[@]}"
-  else
-    final_command="spin up $project@$project_branch --name '$name_param' ${config_params[@]}"
-  fi
-else
-  if [[ "$project_branch" == "none" ]]; then
-    final_command="spin up $project:$constellation --name '$name_param' ${config_params[@]}"
-  else
-    final_command="spin up $project:$constellation@$project_branch --name '$name_param' ${config_params[@]}"
-  fi
+# Prompt the user if they want both "before" and "after" instances
+before_after=$(echo -e "No\nYes" | fzf --prompt="Do you want both 'before' and 'after' instances?: " --reverse)
+
+# Prompt if they want to wait
+should_wait=$(echo -e "No\nYes" | fzf --prompt="Do you want to synchronously wait for the instance(s) to load?" --reverse)
+wait_param=""
+
+if [[ "$should_wait" == "Yes" ]]; then
+  wait_param=" --wait --wait-timeout=-1 --wait-for-unit=spin.target"
 fi
 
-# Execute the final command
-echo "Executing: $final_command"
-eval "$final_command"
+if [[ "$before_after" == "Yes" ]]; then
+  # Construct the "before" command
+  before_name_param="before-$name_param"
+  before_command="spin up $project:$constellation --name '$before_name_param'"
+
+  # Construct the "after" command
+  after_name_param="after-$name_param"
+  if [[ "$constellation" == "none" ]]; then
+    if [[ "$project_branch" == "none" ]]; then
+      after_command="spin up $project --name '$after_name_param' ${config_params[@]} ${wait_param}"
+    else
+      after_command="spin up $project@$project_branch --name '$after_name_param' ${config_params[@]} ${wait_param}"
+    fi
+  else
+    if [[ "$project_branch" == "none" ]]; then
+      after_command="spin up $project:$constellation --name '$after_name_param' ${config_params[@]} ${wait_param}"
+    else
+      after_command="spin up $project:$constellation@$project_branch --name '$after_name_param' ${config_params[@]} ${wait_param}"
+    fi
+  fi
+
+  # Execute the "before" command
+  echo ""
+  echo "--------------------------------------------------------------------------------"
+  echo "Creating 'before' instance, '${before_name_param}':"
+  echo "--------------------------------------------------------------------------------"
+  echo ""
+  echo "$before_command"
+  echo ""
+  eval "$before_command" || {
+    echo "Error: Failed to create 'before' instance."
+    exit 1
+  }
+
+  # Execute the "after" command
+  echo ""
+  echo "--------------------------------------------------------------------------------"
+  echo "Creating 'after' instance, '${after_name_param}':"
+  echo "--------------------------------------------------------------------------------"
+  echo ""
+  echo "$after_command"
+  echo ""
+  eval "$after_command" || {
+    echo "Error: Failed to create 'after' instance."
+    exit 1
+  }
+else
+  # Construct the final command
+  if [[ "$constellation" == "none" ]]; then
+    if [[ "$project_branch" == "none" ]]; then
+      final_command="spin up $project --name '$name_param' ${config_params[@]} ${wait_param}"
+    else
+      final_command="spin up $project@$project_branch --name '$name_param' ${config_params[@]} ${wait_param}"
+    fi
+  else
+    if [[ "$project_branch" == "none" ]]; then
+      final_command="spin up $project:$constellation --name '$name_param' ${config_params[@]} ${wait_param}"
+    else
+      final_command="spin up $project:$constellation@$project_branch --name '$name_param' ${config_params[@]} ${wait_param}"
+    fi
+  fi
+
+  # Execute the final command
+  echo ""
+  echo "--------------------------------------------------------------------------------"
+  echo "Create instance, '${name_param}':"
+  echo "--------------------------------------------------------------------------------"
+  echo ""
+  echo "$final_command"
+  echo ""
+  eval "$final_command" || {
+    echo "Error: Failed to create instance."
+    exit 1
+  }
+fi
