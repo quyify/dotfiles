@@ -51,7 +51,7 @@ fi
 echo "********************************************************************************"
 
 # Command correcting typos from the previously inputted command on the commandline.
-eval $(thefuck --alias)
+[[ -f "$(which thefuck)" ]] && eval $(thefuck --alias)
 
 # Load Nix
 if [ -e ${REPLACE_home}/.nix-profile/etc/profile.d/nix.sh ]; then . ${REPLACE_home}/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
