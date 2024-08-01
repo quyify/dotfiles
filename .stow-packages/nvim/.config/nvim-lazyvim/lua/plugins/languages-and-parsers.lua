@@ -4,7 +4,6 @@ return {
     opts = {
       servers = {
         -- pyright will be automatically installed with mason and loaded with lspconfig
-        solargraph = {},
         rust_analyzer = {},
         html = {},
         elixirls = {},

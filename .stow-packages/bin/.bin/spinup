@@ -152,6 +152,21 @@ fi
 # Prompt the user if they want both "before" and "after" instances
 before_after=$(echo -e "No\nYes" | fzf --prompt="Do you want both 'before' and 'after' instances?: " --reverse)
 
+select_resources=$(echo -e "default\n6xlarge\n4xlarge\n2xlarge\nlarge" | fzf --prompt="What Memory & CPU resources do you need?" --reverse)
+resources_param=""
+
+if [[ "$select_resources" == "large" ]]; then
+  resources_param="--memory 32 --cpu 4"
+elif [[ "$select_resources" == "2xlarge" ]]; then
+  resources_param="--memory 48 --cpu 6"
+elif [[ "$select_resources" == "4xlarge" ]]; then
+  resources_param="--memory 64 --cpu 8"
+elif [[ "$select_resources" == "6xlarge" ]]; then
+  resources_param="--memory 96 --cpu 12"
+else
+  resources_param="--memory 24 --cpu 3"
+fi
+
 # Prompt if they want to wait
 should_wait=$(echo -e "No\nYes" | fzf --prompt="Do you want to synchronously wait for the instance(s) to load?" --reverse)
 wait_param=""
@@ -163,21 +178,21 @@ fi
 if [[ "$before_after" == "Yes" ]]; then
   # Construct the "before" command
   before_name_param="before-$name_param"
-  before_command="spin up $project:$constellation --name '$before_name_param'"
+  before_command="spin up $project:$constellation --name '$before_name_param' ${resources_param}"
 
   # Construct the "after" command
   after_name_param="after-$name_param"
   if [[ "$constellation" == "none" ]]; then
     if [[ "$project_branch" == "none" ]]; then
-      after_command="spin up $project --name '$after_name_param' ${config_params[@]} ${wait_param}"
+      after_command="spin up $project --name '$after_name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     else
-      after_command="spin up $project@$project_branch --name '$after_name_param' ${config_params[@]} ${wait_param}"
+      after_command="spin up $project@$project_branch --name '$after_name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     fi
   else
     if [[ "$project_branch" == "none" ]]; then
-      after_command="spin up $project:$constellation --name '$after_name_param' ${config_params[@]} ${wait_param}"
+      after_command="spin up $project:$constellation --name '$after_name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     else
-      after_command="spin up $project:$constellation@$project_branch --name '$after_name_param' ${config_params[@]} ${wait_param}"
+      after_command="spin up $project:$constellation@$project_branch --name '$after_name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     fi
   fi
 
@@ -210,15 +225,15 @@ else
   # Construct the final command
   if [[ "$constellation" == "none" ]]; then
     if [[ "$project_branch" == "none" ]]; then
-      final_command="spin up $project --name '$name_param' ${config_params[@]} ${wait_param}"
+      final_command="spin up $project --name '$name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     else
-      final_command="spin up $project@$project_branch --name '$name_param' ${config_params[@]} ${wait_param}"
+      final_command="spin up $project@$project_branch --name '$name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     fi
   else
     if [[ "$project_branch" == "none" ]]; then
-      final_command="spin up $project:$constellation --name '$name_param' ${config_params[@]} ${wait_param}"
+      final_command="spin up $project:$constellation --name '$name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     else
-      final_command="spin up $project:$constellation@$project_branch --name '$name_param' ${config_params[@]} ${wait_param}"
+      final_command="spin up $project:$constellation@$project_branch --name '$name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     fi
   fi
 

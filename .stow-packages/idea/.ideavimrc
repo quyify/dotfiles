@@ -3,7 +3,7 @@
 
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-commentary'
+"Plug 'tpope/vim-commentary' "(commented out because it defaults to gc, which I prefer to be GoToClass)
 Plug 'preservim/nerdtree'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'preservim/nerdtree'
@@ -17,6 +17,8 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'chrisbra/matchit'
 
 set ideajoin
+set which-key
+set timeoutlen=7000 "how long the which-key popup stays open
 
 " By default, with ideavim, during an IDE refactor, the text being refactored
 " is in command mode.  This is not intuitive.  This setting changes the
@@ -61,7 +63,7 @@ nnoremap [t :action NextTab<CR>
 nnoremap ]t :action PreviousTab<CR>
 nnoremap gD :action GotoTypeDeclaration<CR>
 nnoremap gI :action QuickImplementations<CR>
-nnoremap gf :action Find<CR>
+"nnoremap gf :action Find<CR> "Commented out because it defaults to gf, which I prefer to be GoToFile
 nnoremap <c-o> :action Back<CR>
 nnoremap <c-t> :action Forward<CR>
 
@@ -70,9 +72,11 @@ nnoremap <c-t> :action Forward<CR>
 :map <leader>d <Action>(Debug)
 :map <leader>r <Action>(ReformatCode)
 "================================================================================
-" Neo Vim
+" Fuzzier
 "================================================================================
-nnoremap <leader>f <cmd>Telescope find_files<cr>
+map <Leader>pf <action>(com.mituuz.fuzzier.Fuzzier)
+map <Leader>gf <action>(com.mituuz.fuzzier.FuzzierVCS)
+map <Leader>mf <action>(com.mituuz.fuzzier.FuzzyMover)
 
 
 "================================================================================
@@ -143,6 +147,7 @@ nnoremap <leader>H :action TypeHierarchy<CR>
 nnoremap <leader>b :action ShowNavBar<CR>
 nnoremap <c-s> :action FileStructurePopup<CR>
 nnoremap <c-y> :action GotoSymbol<CR>
+nnoremap gf :action GotoFile<CR>
 nnoremap gc :action GotoClass<CR>
 nnoremap gr :action GotoRelated<CR>
 nnoremap gi :action GotoImplementation<CR>

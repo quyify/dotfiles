@@ -1,0 +1,50 @@
+# ~/.tmuxinator/web.yml
+
+name: bus
+root: ~/
+
+# Optional tmux socket
+# socket_name: foo
+
+# Runs before everything. Use it to start daemons etc.
+# pre: sudo /etc/rc.d/mysqld start
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+tmux_options: -2
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+windows:
+  - shell:
+      layout: even-horizontal
+      panes:
+        - cd ~/
+  - spin:
+      layout: even-horizontal
+      panes:
+        - cd ~/
+        - cd ~/
+  - business-platform:
+      layout: even-horizontal
+      panes:
+        - dev cd business-platform
+        - dev cd business-platform
+  - shopify:
+      layout: even-horizontal
+      panes:
+        - dev cd shopify
+        - dev cd shopify
+  - web:
+      layout: even-horizontal
+      panes:
+        - dev cd web
+        - dev cd web
+  - abacus:
+      layout: even-horizontal
+      panes:
+        - dev cd abacus
+        - dev cd abacus
