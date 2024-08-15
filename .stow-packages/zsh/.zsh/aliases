@@ -24,18 +24,21 @@ alias gs="git status"
 alias gcm="git checkout main"
 alias gpr="git pull --rebase"
 alias log="git log --oneline --decorate --graph"
+
+# dev alias
 alias dbp="dev cd business-platform"
 alias dshop="dev cd shopify"
 alias dbo="dev cd bouregois"
 alias dweb="dev cd web"
 alias dab="dev cd abacus"
+alias rake-us-paypal="rake business_platform:profile_assessment_platform_tophat:setup_sp_with_country COUNTRY='US' BETAS='shopify_payments_multi_provider_united_states_paypal'"
 
 if [[ `uname` != "Darwin" ]]; then
-	if [[ `which xsel 2> /dev/null` ]]; then
-		alias pbcopy='xsel --clipboard --input'
-		alias pbpaste='xsel --clipboard --output'
-	elif [[ `which xclip 2> /dev/null` ]]; then
-		alias pbcopy='xclip -selection clipboard'
-		alias pbpaste='xclip -selection clipboard -o'
-	fi
+│ if [[ `which xsel 2> /dev/null` ]]; then
+│ │ alias pbcopy='xsel --clipboard --input'
+│ │ alias pbpaste='xsel --clipboard --output'
+│ elif [[ `which xclip 2> /dev/null` ]]; then
+│ │ alias pbcopy='xclip -selection clipboard'
+│ │ alias pbpaste='xclip -selection clipboard -o'
+│ fi
 fi
