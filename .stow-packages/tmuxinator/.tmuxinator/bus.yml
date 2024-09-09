@@ -47,4 +47,8 @@ windows:
       layout: even-horizontal
       panes:
         - dev cd abacus
-        - dev cd abacus
+  - webhooks:
+      layout: even-horizontal
+      panes:
+        - dev cd shopify
+        - dev cd shopify

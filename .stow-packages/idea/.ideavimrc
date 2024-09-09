@@ -146,7 +146,7 @@ nnoremap <leader>h :action CallHierarchy<CR>
 nnoremap <leader>H :action TypeHierarchy<CR>
 nnoremap <leader>b :action ShowNavBar<CR>
 nnoremap <c-s> :action FileStructurePopup<CR>
-nnoremap <c-y> :action GotoSymbol<CR>
+nnoremap gy :action GotoSymbol<CR>
 nnoremap gf :action GotoFile<CR>
 nnoremap gc :action GotoClass<CR>
 nnoremap gr :action GotoRelated<CR>

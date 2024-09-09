@@ -1,5 +1,8 @@
 #!/bin/bash
 
+## You'll need to have the following installed to run this script:
+# - fzf: Install with `brew install fzf`
+
 # Function to prompt user with fzf
 prompt_fzf() {
   local prompt_message=$1
