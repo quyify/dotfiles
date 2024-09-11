@@ -103,17 +103,17 @@ fi
 # Prompt for the constellation parameter if not specified
 if [[ -z $constellation ]]; then
   constellations=$(get_constellations "$project")
-  constellations_with_default=$(echo -e "none\ndefault\n$constellations")
+  constellations_with_default=$(echo -e "none\ncustom\n$constellations")
   constellation=$(prompt_fzf "Select the constellation" "$constellations_with_default")
 fi
 
-# Handle the case where the constellation is 'default'
-if [[ "$constellation" == "default" ]]; then
-  default_symlink=~/.spin/$project/default
-  if [[ -L "$default_symlink" ]]; then
-    constellation=$(basename "$(readlink "$default_symlink")" .yml)
+# Handle the case where the constellation is 'custom'
+if [[ "$constellation" == "custom" ]]; then
+  custom_symlink=~/.spin/$project/custom
+  if [[ -L "$custom_symlink" ]]; then
+    constellation=$(basename "$(readlink "$custom_symlink")" .yml)
   else
-    echo "Error: The symlink ~/.spin/$project/default does not exist or is not a valid symlink."
+    echo "Error: The symlink ~/.spin/$project/custom does not exist or is not a valid symlink."
     exit 1
   fi
 fi
@@ -181,17 +181,20 @@ fi
 if [[ "$before_after" == "Yes" ]]; then
   # Construct the "before" command
   before_name_param="before-$name_param"
-  before_command="spin up $project:$constellation --name '$before_name_param' ${resources_param}"
 
   # Construct the "after" command
   after_name_param="after-$name_param"
   if [[ "$constellation" == "none" ]]; then
+    before_command="spin up $project --name '$before_name_param' ${resources_param}"
+
     if [[ "$project_branch" == "none" ]]; then
       after_command="spin up $project --name '$after_name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     else
       after_command="spin up $project@$project_branch --name '$after_name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     fi
   else
+    before_command="spin up $project:$constellation --name '$before_name_param' ${resources_param}"
+
     if [[ "$project_branch" == "none" ]]; then
       after_command="spin up $project:$constellation --name '$after_name_param' ${config_params[@]} ${resources_param} ${wait_param}"
     else
