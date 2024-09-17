@@ -1,45 +1,47 @@
 #!/bin/bash
 
-# Function to copy a column from a CSV to the clipboard
-copy_column() {
-	local filename="$1"
-	local column_name="$2"
+# Prompt the user to select a CSV file
+csv_file=$(find . -type f -name "*.csv" | fzf --prompt="Select a CSV file: ")
 
-	# Select the column, remove the header, and copy to clipboard
-	xsv select "$column_name" "$filename" | grep -v "$column_name" | paste -sd ',' - | pbcopy
-	echo "Column '$column_name' from '$filename' has been copied to the clipboard, as a CSV"
+# Check if a file was selected
+if [[ -z "$csv_file" ]]; then
+  echo "No file selected. Exiting."
+  exit 1
+fi
+
+# Prompt the user to select a column
+column=$(head -n 1 "$csv_file" | tr ',' '\n' | nl -v 0 | fzf --prompt="Select a column: " | awk '{print $1}')
+
+# Check if a column was selected
+if [[ -z "$column" ]]; then
+  echo "No column selected. Exiting."
+  exit 1
+fi
+
+# Prompt the user if they want each value to be in single quotes
+quote_values=$(echo -e "No\nYes" | fzf --prompt="Wrap each value in single quotes? ")
+
+# Prompt the user if they want a newline after each comma
+newline_after_comma=$(echo -e "No\nYes" | fzf --prompt="Add newline after each comma? ")
+
+# Extract the selected column, optionally wrap in single quotes, and format with or without newlines
+awk -v col="$column" -v quote="$quote_values" -v newline="$newline_after_comma" -F, '
+NR > 1 {
+  value = $col
+  if (quote == "Yes") {
+    value = "'"'"'" value "'"'"'"
+  }
+  if (newline == "Yes") {
+    printf "%s,\n", value
+  } else {
+    printf "%s,", value
+  }
 }
+END {
+  if (newline != "Yes") {
+    printf "\n"
+  }
+}
+' "$csv_file" | pbcopy
 
-# Mode 1: Command line arguments
-if [ "$#" -eq 2 ]; then
-	filename=$1
-	column_name=$2
-	copy_column "$filename" "$column_name"
-	exit 0
-fi
-
-# Mode 2: Interactive selection using fzf
-if [ "$#" -eq 0 ]; then
-	# Select file using fzf
-	selected_file=$(find . -name '*.csv' | fzf --prompt="Select a CSV file: ")
-	if [ -z "$selected_file" ]; then
-		echo "No file selected."
-		exit 1
-	fi
-
-	# Select column using fzf
-	selected_header=$(head -n 1 "$selected_file" | tr ',' '\n' | fzf --prompt="Which column do you want to grab? ")
-	if [ -z "$selected_header" ]; then
-		echo "No column selected."
-		exit 1
-	fi
-
-	# Copy the selected column to the clipboard
-	copy_column "$selected_file" "$selected_header"
-	exit 0
-fi
-
-# If no mode fits
-echo "Usage: $0 <filename.csv> <column_name>"
-echo "Or run without arguments for interactive mode."
-exit 1
+echo "Column copied to clipboard."
