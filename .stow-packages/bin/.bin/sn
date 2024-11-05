@@ -1,0 +1,6 @@
+#!/bin/sh
+
+name=$( git branch --show-current | tr '/' '-' )
+echo $name | pbcopy
+
+echo $name

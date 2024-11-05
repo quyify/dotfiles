@@ -155,7 +155,7 @@ fi
 # Prompt the user if they want both "before" and "after" instances
 before_after=$(echo -e "No\nYes" | fzf --prompt="Do you want both 'before' and 'after' instances?: " --reverse)
 
-select_resources=$(echo -e "default\n6xlarge\n4xlarge\n2xlarge\nlarge" | fzf --prompt="What Memory & CPU resources do you need?" --reverse)
+select_resources=$(echo -e "unspecified\ndefault\n6xlarge\n4xlarge\n2xlarge\nlarge" | fzf --prompt="What Memory & CPU resources do you need?" --reverse)
 resources_param=""
 
 if [[ "$select_resources" == "large" ]]; then
@@ -166,8 +166,10 @@ elif [[ "$select_resources" == "4xlarge" ]]; then
   resources_param="--memory 64 --cpu 8"
 elif [[ "$select_resources" == "6xlarge" ]]; then
   resources_param="--memory 96 --cpu 12"
+elif [[ "$select_resources" == "default" ]]; then
+  resources_param="-memory 24 --cpu 3"
 else
-  resources_param="--memory 24 --cpu 3"
+  resources_param=""
 fi
 
 # Prompt if they want to wait
