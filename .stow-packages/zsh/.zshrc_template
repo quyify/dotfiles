@@ -7,6 +7,10 @@ if [[ -n "${REPLACE_spin}" ]]; then
   echo "Loading default SPIN .zshrc: /etc/zsh/zshrc.default.inc.zsh"
   echo "********************************************************************************"
   source /etc/zsh/zshrc.default.inc.zsh
+
+  # Setup Homebrew for Linux
+  test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+  test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 echo "********************************************************************************"

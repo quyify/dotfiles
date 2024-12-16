@@ -3,7 +3,16 @@
 # go there the directory of this currently 'sourced' script ( quietly )
 pushd $(dirname ${BASH_SOURCE:-$0}) >/dev/null
 
-if [[ "$(uname)" == "Darwin" ]]; then
+if [[ -n "$SPIN" ]]; then
+	# Install/update Homebrew for Spin environments
+	source .scripts/brew/install-homebrew.sh
+
+	# Install Homebrew packages
+	source .scripts/brew/install-brew-packages.sh
+
+	# Setup Ruby wrapper for shadowenv
+	source .scripts/ruby/setup-ruby-wrapper.sh
+elif [[ "$(uname)" == "Darwin" ]]; then
 	# TODO set up homebrew stuff
 	echo "Running in Darwin"
 else
