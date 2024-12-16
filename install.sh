@@ -3,7 +3,13 @@
 # go there the directory of this currently 'sourced' script ( quietly )
 pushd $(dirname ${BASH_SOURCE:-$0}) >/dev/null
 
-if [[ "$(uname)" == "Darwin" ]]; then
+if [[ -n "$SPIN" ]]; then
+	# Install/update Homebrew for Spin environments
+	source .scripts/brew/install-homebrew.sh
+
+	# Install Homebrew packages (including antidote)
+	source .scripts/brew/install-brew-packages.sh
+elif [[ "$(uname)" == "Darwin" ]]; then
 	# TODO set up homebrew stuff
 	echo "Running in Darwin"
 else
@@ -14,14 +20,25 @@ else
 	source .scripts/nix/install-nix-packages.sh
 fi
 
-# $HOME dotfiles
+# Now that we have stow installed, create symlinks
 source .scripts/stow/create-home-dotfile-symlinks.sh
 
-# SPIN settings
-[[ -n "$SPIN" ]] && source .scripts/spin/configure-spin.sh
+if [[ -n "$SPIN" ]]; then
+	# Setup Ruby wrapper for shadowenv
+	source .scripts/ruby/setup-ruby-wrapper.sh
 
-# ~/.zshrc
-source .scripts/zsh/generate-home-zshrc.sh
+	# SPIN settings
+	source .scripts/spin/configure-spin.sh
+
+	# Generate zsh config (after Homebrew packages are installed)
+	source .scripts/zsh/generate-home-zshrc.sh
+elif [[ "$(uname)" == "Darwin" ]]; then
+	# Generate zsh config
+	source .scripts/zsh/generate-home-zshrc.sh
+else
+	# Generate zsh config (after Nix packages are installed)
+	source .scripts/zsh/generate-home-zshrc.sh
+fi
 
 # Tmux Plugins
 source .scripts/tmux/install-tmux-plugins.sh

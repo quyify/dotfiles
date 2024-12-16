@@ -1,0 +1,29 @@
+#!/bin/bash
+
+SHOPIFY_DIR="$HOME/src/github.com/Shopify/shopify/areas/core/shopify"
+
+# Get the Ruby version from shadowenv
+RUBY_VERSION=$(shadowenv exec --dir "$SHOPIFY_DIR" env | grep RUBY_VERSION= | cut -d= -f2)
+
+if [ -z "$RUBY_VERSION" ]; then
+    echo "Error: Could not determine Ruby version from shadowenv" >&2
+    exit 1
+fi
+
+# Construct the Ruby path
+RUBY_PATH="/opt/rubies/ruby-${RUBY_VERSION}/bin/ruby"
+
+if [ ! -x "$RUBY_PATH" ]; then
+    echo "Error: Ruby executable not found at $RUBY_PATH" >&2
+    exit 1
+fi
+
+# Export all environment variables from shadowenv
+IFS=$'\n'
+for env in $(shadowenv exec --dir "$SHOPIFY_DIR" env); do
+    export "$env"
+done
+unset IFS
+
+# Execute Ruby with all arguments passed to this script
+exec "$RUBY_PATH" "$@"
