@@ -1,0 +1,9 @@
+#!/bin/bash
+# git-diff-branch-copy
+#
+# Git subcommand to copy branch diff to clipboard, works on both Mac and Linux.
+# Note: Scripts prefixed with 'git-' are automatically recognized as Git subcommands,
+# allowing them to be called as 'git diff-branch-copy'
+
+# Get the diff and pipe it to our clipboard utility
+git diff-branch | clipboard

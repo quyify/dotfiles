@@ -15,10 +15,9 @@ github_copilot_config_path="${HOME}/.config/github-copilot"
 github_copilot_config="${github_copilot_config_path}/hosts.json"
 
 if [[ -f $github_copilot_secret ]]; then
-	[[ -d $github_copilot_config_path ]] || mkdir -p $github_copilot_config_path
-	ln -snvf $github_copilot_secret $github_copilot_config
+  [[ -d $github_copilot_config_path ]] || mkdir -p $github_copilot_config_path
+  ln -snvf $github_copilot_secret $github_copilot_config
 fi
-
 
 # Quy, you registered this file with Spin with the following command:
 # `cat ~/.config/graphite/user_config | spin secrets create graphite_user_config`
@@ -26,12 +25,12 @@ fi
 graphite_user_secret="/etc/spin/secrets/graphite_user_config"
 
 # Where we ultimately want the secret symlinked to
-graphite_user_config_path="${HOME}/.config/grpahite"
+graphite_user_config_path="${HOME}/.config/graphite"
 graphite_user_config="${graphite_user_config_path}/user_config"
 
 if [[ -f $graphite_user_secret ]]; then
-	[[ -d $graphite_user_config_path ]] || mkdir -p $graphite_user_config_path
-	ln -snvf $graphite_user_secret $graphite_user_config
+  [[ -d $graphite_user_config_path ]] || mkdir -p $graphite_user_config_path
+  ln -snvf $graphite_user_secret $graphite_user_config
 fi
 
 echo "********************************************************************************"

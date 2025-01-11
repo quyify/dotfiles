@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Print usage if no hash is provided
+if [ $# -eq 0 ]; then
+    echo "Usage: git diff-hash <commit-hash>"
+    exit 1
+fi
+
+# Show the diff using the ^! notation
+# Equivalent to: git diff <hash>^ <hash>
+# Example: git diff abc123^! == git diff abc123^ abc123
+git diff "${1}^!"

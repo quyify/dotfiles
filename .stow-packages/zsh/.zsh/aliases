@@ -24,6 +24,11 @@ alias gs="git status"
 alias gcm="git checkout main"
 alias gpr="git pull --rebase --autostash"
 alias log="git log --oneline --decorate --graph"
+alias gp="git parent-branch"
+alias gd="git diff-branch"
+alias gdc="git diff-branch-copy"
+alias gdh="git diff-hash"
+alias gdhc="git diff-hash | clipboard"
 
 # dev alias
 alias dbp="dev cd business-platform"

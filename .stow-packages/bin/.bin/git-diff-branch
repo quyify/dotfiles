@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Get the current branch name
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Get the parent branch using our parent-branch script
+parent_branch=$(git-parent-branch)
+
+# Find the common ancestor (merge base) between:
+# - the parent branch (prefixed with origin/)
+# - and the current HEAD
+merge_base=$(git merge-base origin/$parent_branch HEAD)
+
+# Show the diff between:
+# - the merge base (where we branched from)
+# - and the current state (HEAD)
+# This shows all changes made in our branch
+git diff $merge_base..HEAD
+
+# Usage examples:
+# diff-branch              - show diff
+# diff-branch | pbcopy     - copy diff to clipboard (Mac)
+# diff-branch | clip       - copy diff to clipboard (Windows)
+# diff-branch | xclip      - copy diff to clipboard (Linux)

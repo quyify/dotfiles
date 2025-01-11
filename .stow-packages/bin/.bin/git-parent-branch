@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Show the reference log (history of where HEAD has pointed)
+# This includes all checkouts, merges, commits, etc.
+git reflog show HEAD |
+
+  # Find lines containing 'checkout:' which indicate branch switches
+  # Example line: "8000d4a9d5 HEAD@{0}: checkout: moving from main to central-merge-upsert-documents"
+  grep 'checkout:' |
+
+  # Take only the first (most recent) checkout
+  # This shows the last branch we switched from
+  head -n1 |
+
+  # Use sed to extract just the source branch name
+  # Pattern: 's/.*from \([^ ]*\) to.*/\1/'
+  #   .*from       - match everything up to "from "
+  #   \([^ ]*\)    - capture everything that's not a space
+  #   to.*         - match " to" and everything after
+  #   \1           - replace everything with just the captured branch name
+  sed 's/.*from \([^ ]*\) to.*/\1/'

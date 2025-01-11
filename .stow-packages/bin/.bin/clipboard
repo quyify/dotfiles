@@ -1,0 +1,23 @@
+#!/bin/bash
+# clipboard
+#
+# General utility to copy stdin to clipboard, works on both Mac and Linux.
+# Usage: echo "test" | clipboard
+
+# Try Mac's pbcopy first
+if command -v pbcopy >/dev/null 2>&1; then
+    pbcopy
+    echo "Copied to clipboard using pbcopy (Mac)" >&2
+    exit 0
+fi
+
+# Try xclip for Linux
+if command -v xclip >/dev/null 2>&1; then
+    xclip -selection clipboard
+    echo "Copied to clipboard using xclip (Linux)" >&2
+    exit 0
+fi
+
+# If neither is available, show error
+echo "Error: No clipboard command found. Please install pbcopy (Mac) or xclip (Linux)" >&2
+exit 1
