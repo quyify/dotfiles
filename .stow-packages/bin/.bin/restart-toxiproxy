@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Stopping brew services: toxiproxy"
+# Stop the manager that auto starts toxiproxy
+brew services stop toxiproxy
+
+sleep 3
+
+echo "Killing all toxiproxy instances"
+# Kill any spawned toxiproxy
+pkill -f toxiproxy
+
+sleep 3
+
+echo "Starting brew services: toxiproxy"
+# Start the manager that auto starts toxiproxy
+brew services start toxiproxy

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+spin list -Ho fqdn | grep "after" | head -n 1

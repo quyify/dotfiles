@@ -28,7 +28,7 @@ alias gp="git parent-branch"
 alias gd="git diff-branch"
 alias gdc="git diff-branch-copy"
 alias gdh="git diff-hash"
-alias gdhc="git diff-hash | clipboard"
+alias gdhc="git diff-hash-copy"
 
 # dev alias
 alias dbp="dev cd business-platform"

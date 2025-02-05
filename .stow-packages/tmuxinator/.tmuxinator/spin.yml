@@ -1,6 +1,6 @@
-# ~/.tmuxinator/bus.yml
+# ~/.tmuxinator/spin.yml
 
-name: bus
+name: spin
 root: ~/
 
 # Optional tmux socket
@@ -19,36 +19,33 @@ tmux_options: -2
 # tmux_command: byobu
 
 windows:
-  - shell:
-      layout: even-horizontal
-      panes:
-        - cd ~/
   - spin:
       layout: even-horizontal
       panes:
-        - cd ~/
-        - cd ~/
+        - ssh -X $(spinhost)
+        - cd ~
   - business-platform:
       layout: even-horizontal
       panes:
-        - dev cd business-platform
-        - dev cd business-platform
+        - ssh -X $(spinhost)
+        - dev business-platform
   - shopify:
       layout: even-horizontal
       panes:
-        - dev cd shopify
+        - ssh -X $(spinhost)
         - dev cd shopify
   - web:
       layout: even-horizontal
       panes:
-        - dev cd web
-        - dev cd web
+        - ssh -X $(spinhost)
+        - dev cd web 
   - abacus:
       layout: even-horizontal
       panes:
+        - ssh -X $(spinhost)
         - dev cd abacus
   - webhooks:
       layout: even-horizontal
       panes:
-        - dev cd shopify
-        - dev cd shopify
+        - ssh -X $(spinhost)
+        - dev cd webhooks

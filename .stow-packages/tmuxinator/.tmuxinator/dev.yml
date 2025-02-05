@@ -1,6 +1,6 @@
-# ~/.tmuxinator/bus.yml
+# ~/.tmuxinator/dev.yml
 
-name: bus
+name: dev
 root: ~/
 
 # Optional tmux socket
@@ -22,11 +22,6 @@ windows:
   - shell:
       layout: even-horizontal
       panes:
-        - cd ~/
-  - spin:
-      layout: even-horizontal
-      panes:
-        - cd ~/
         - cd ~/
   - business-platform:
       layout: even-horizontal
@@ -52,3 +47,19 @@ windows:
       panes:
         - dev cd shopify
         - dev cd shopify
+  - identity:
+      layout: even-horizontal
+      panes:
+        - dev cd identity
+        - dev cd identity
+  - all:
+      layout: tilted 
+      panes:
+        - dev cd identity
+        - dev cd billing
+        - dev cd shopify
+        - dev cd business-platform
+        - dev cd abacus
+        - dev cd payment-service
+        - dev cd bourgeois
+        - dev cd webhook

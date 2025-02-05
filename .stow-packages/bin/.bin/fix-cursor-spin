@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Check if version argument is provided
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <version-hash>"
+  echo "Example: $0 cce0110ca40ceb61e76ecea08d24210123895320"
+  exit 1
+fi
+
+VERSION_HASH=$1
+TIMESTAMP=$(date "+%Y%m%d_%H%M%S")
+
+# Create directory and set permissions
+echo "Backing up existing cursor-server directory..."
+if [ -d ~/.cursor-server ]; then
+  mv ~/.cursor-server ~/.cursor-server.bak.${TIMESTAMP} 2>/dev/null || true
+  echo "Backup created at: ~/.cursor-server.bak.${TIMESTAMP}"
+fi
+
+mkdir -p ~/.cursor-server
+chmod 755 ~/.cursor-server
+cd ~/.cursor-server
+
+# Download the file
+echo "Downloading cursor CLI for version ${VERSION_HASH}..."
+curl -L "https://cursor.blob.core.windows.net/remote-releases/${VERSION_HASH}/cli-alpine-x64.tar.gz" -o cli-alpine-x64.tar.gz
+
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to download the cursor CLI"
+  exit 1
+fi
+
+# Extract with verbose output
+echo "Extracting files..."
+tar -xvzf cli-alpine-x64.tar.gz
+
+# Check the contents
+ls -la
+
+# Make sure the binary is executable and rename it
+echo "Setting up the cursor binary..."
+chmod +x cursor
+mv cursor "code-${VERSION_HASH}"
+
+echo "Installation complete! The cursor binary is now at: ~/.cursor-server/code-${VERSION_HASH}"

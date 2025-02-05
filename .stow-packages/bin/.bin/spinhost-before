@@ -1,0 +1,3 @@
+#!/bin/sh
+
+spin list -Ho fqdn | grep "before" | head -n 1
